@@ -2,18 +2,16 @@
 //Je récupère l'id du produit cliqué sur la page d'accueil
 let getProductId = new URLSearchParams(document.location.search);
 let productId = getProductId.get("id");
-console.log(productId);
 
 //Je rentre l'url avec id dans une variable
 let urlProductId = `http://localhost:3000/api/products/${productId}`;
-console.log(urlProductId);
 
 //Je fais une requête get de l'API
 fetch(urlProductId)
     .then((response) =>
         response.json().then((data) => {
             //Je vérifie que j'ai bien accès aux données de l'api dans la console
-            console.log(data);
+            //console.log(data);
             //Je récupère et affiche les éléments img, alt title price et description dans le HTML
             document.querySelector(
                 ".item__img"
@@ -40,23 +38,18 @@ fetch(urlProductId)
 //});
 
 //---------------------------Gestion du panier----------------------------------//
-
-//Sélection de la quantité de produits
-let quantity = document.getElementById("quantity");
-let quantitySelected = 0;
-
-quantity.addEventListener("change", (event) => {
-    quantitySelected = event.target.value;
-});
-
-//Sélection de la couleur du produit
-const colorOption = document.getElementById("colors");
-let colorSelected = "";
-
-colorOption.addEventListener("change", (event) => {
-    colorSelected = event.target.value;
-});
-
+// Lorsqu’on ajoute un produit au panier, si celui-ci était déjà présent dans le panier (même id + même couleur), on incrémente simplement la quantité du produit correspondant dans l’array.
+const addProductsLocalStorage = (storage, product) => {
+    for (let line of storage) {
+        if (product.id == line.id && product.color == line.color) {
+            line.quantity = +line.quantity + +product.quantity;
+            localStorage.setItem("products", JSON.stringify(storage));
+            return;
+        }
+    }
+    storage.push(product);
+    localStorage.setItem("products", JSON.stringify(storage));
+};
 //Sélection du bouton Ajouter au panier
 const btnSend = document.getElementById("addToCart");
 
@@ -64,45 +57,29 @@ const btnSend = document.getElementById("addToCart");
 btnSend.addEventListener("click", (event) => {
     event.preventDefault();
 
+    let quantitySelected = document.getElementById("quantity").value;
+    let colorSelected = document.getElementById("colors").value;
+
     if (colorSelected == false) {
         confirm("Veuillez sélectionner une couleur");
     } else if (quantitySelected == 0) {
         confirm("Veuillez sélectionner un nombre d'article");
     } else {
-        alert("Votre article a bien été ajouté au panier");
         //Récupération des valeurs du formulaire
         let basket = {
             id: productId,
             quantity: quantitySelected,
             color: colorSelected,
         };
-        console.log(basket);
+
         //Local Storage
         let productsInBasket = JSON.parse(localStorage.getItem("products"));
-        //Fonction ajouter un produit dans le local storage
-        const addProductsLocalStorage = () => {
-            productsInBasket.push(basket);
-            localStorage.setItem("products", JSON.stringify(productsInBasket));
-        };
-        //S'il y a déjà un produit enregistré dans le local storage
-        if (productsInBasket) {
-            addProductsLocalStorage();
-            console.log(productsInBasket);
-        }
+
         //S'il n'y a pas de produit enregistré dans le local storage, j'ajoute le produit dans un tableau vide
-        else {
+        if (!productsInBasket) {
             productsInBasket = [];
-            addProductsLocalStorage();
         }
+        addProductsLocalStorage(productsInBasket, basket);
+        alert("Votre article a bien été ajouté au panier");
     }
 });
-
-//Il est nécessaire d’utiliser localStorage pour pouvoir accéder à cet array depuis la page Panier.
-
-//Lorsqu’on ajoute un produit au panier, si celui-ci n'était pas déjà présent dans le panier, on ajoute un nouvel élément dans l’array.
-
-// Lorsqu’on ajoute un produit au panier, si celui-ci était déjà présent dans le panier (même id + même couleur), on incrémente simplement la quantité du produit correspondant dans l’array.
-
-//if panier est vide
-//ajouter valeur dans array
-//Sinon incrémenter quantité dans array
