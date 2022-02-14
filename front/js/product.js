@@ -42,6 +42,7 @@ fetch(urlProductId)
 const addProductsLocalStorage = (storage, product) => {
     for (let line of storage) {
         if (product.id == line.id && product.color == line.color) {
+            //utilisation du + unaire pour transformer en nombre
             line.quantity = +line.quantity + +product.quantity;
             localStorage.setItem("products", JSON.stringify(storage));
             return;
@@ -59,6 +60,7 @@ btnSend.addEventListener("click", (event) => {
 
     let quantitySelected = document.getElementById("quantity").value;
     let colorSelected = document.getElementById("colors").value;
+    let priceDisplayed = document.getElementById("price").innerText;
 
     if (colorSelected == false) {
         confirm("Veuillez sélectionner une couleur");
@@ -70,7 +72,9 @@ btnSend.addEventListener("click", (event) => {
             id: productId,
             quantity: quantitySelected,
             color: colorSelected,
+            price: priceDisplayed,
         };
+        console.log(basket);
 
         //Local Storage
         let productsInBasket = JSON.parse(localStorage.getItem("products"));
@@ -83,3 +87,6 @@ btnSend.addEventListener("click", (event) => {
         alert("Votre article a bien été ajouté au panier");
     }
 });
+
+let priceDisplayed = document.getElementById("price").innerText;
+console.log(priceDisplayed);
