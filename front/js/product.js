@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------
-//Affichage du produit dans le panier
+//Affichage du produit
 //-------------------------------------------------------------------
 
 let getProductId = new URLSearchParams(document.location.search);
@@ -36,10 +36,10 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     .catch((err) => console.log("Erreur : " + err));
 
 //-------------------------------------------------------------------
-//Gestion du panier
+//Gestion du panier - localStorage
 //-------------------------------------------------------------------
 
-// Fonction qui incrémente le nombre de produits dans le panier si ce même produit est déjà présent.
+// Fonction qui ajoute le nombre de produits dans le localStorage
 const addProductsLocalStorage = (storage, product) => {
     for (let line of storage) {
         if (product.id == line.id && product.color == line.color) {
@@ -49,6 +49,7 @@ const addProductsLocalStorage = (storage, product) => {
             return;
         }
     }
+    //Ajoute les données dans le localStorage
     storage.push(product);
     localStorage.setItem("basket", JSON.stringify(storage));
 };
@@ -65,15 +66,15 @@ btnSend.addEventListener("click", (event) => {
     let priceDisplayed = document.getElementById("price").innerText;
 
     if (colorSelected == false) {
-        confirm("Veuillez sélectionner une couleur");
+        alert("Veuillez sélectionner une couleur");
     } else if (quantitySelected == 0) {
-        confirm("Veuillez sélectionner un nombre d'article");
+        alert("Veuillez sélectionner un nombre d'article");
     } else if (quantitySelected < 0) {
-        confirm("Veuillez sélectionner un nombre d'article supérieur à zéro");
+        alert("Veuillez sélectionner un nombre d'article supérieur à zéro");
     } else if (quantitySelected > 100) {
-        confirm("Veuillez sélectionner un nombre d'article inférieur à 100");
+        alert("Veuillez sélectionner un nombre d'article inférieur à 100");
     } else {
-        //Récupération des valeurs du formulaire
+        //Ajout des produits dans le panier
         let basket = {
             id: productId,
             quantity: quantitySelected,
@@ -82,8 +83,9 @@ btnSend.addEventListener("click", (event) => {
         };
         console.log(basket);
 
-        //Local Storage
+        //Lecture des données récupérées dans le local Storage
         let productsInBasket = JSON.parse(localStorage.getItem("basket"));
+        console.log(productsInBasket);
 
         //S'il n'y a pas de produit enregistré dans le local storage, j'ajoute le produit dans un tableau vide
         if (!productsInBasket) {
