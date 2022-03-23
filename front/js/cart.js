@@ -9,7 +9,7 @@ let products = [];
 let orderId = "";
 
 //-------------------------------------------------------------------
-//Affichage des produits du panier
+//Affichage des produits du panier et gestion de la modification de la quantité et suppression de produits
 //-------------------------------------------------------------------
 
 //Fonction qui affiche les produits du panier
@@ -75,7 +75,7 @@ const displayBasket = () => {
                     divDescription.append(pColor);
                     //Balise p - Affichage du prix unitaire
                     let pPrice = document.createElement("p");
-                    pPrice.textContent = product.price + " €";
+                    pPrice.textContent = data.price + " €";
                     divDescription.append(pPrice);
                     //Balise div content settings
                     let divSettings = document.createElement("div");
